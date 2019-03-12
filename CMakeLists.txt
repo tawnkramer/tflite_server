@@ -6,5 +6,6 @@ set (SRCS
 	src/main.cpp
 )
 
-add_exectuable(tflite_serve ${SRCS})
+add_executable(tflite_serve ${SRCS})
+target_link_libraries(tflite_serve zmq)
 
