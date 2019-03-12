@@ -87,7 +87,7 @@ bool TFLiteModel::Inference(void* data, size_t len, std::string& result)
     if(len != GetInputSize())
     {
         char buf[1024];
-        sprintf(buf, "{ \"result\" : \"ERR >> expected %d bytes, got %d\"}", GetInputSize(), len); 
+        sprintf(buf, "{ \"err\" : \"ERR >> expected %d bytes, got %d\"}", GetInputSize(), len); 
         result = buf;
         return false;
     }
@@ -129,7 +129,7 @@ bool TFLiteModel::Inference(void* data, size_t len, std::string& result)
 void TFLiteModel::GetResultJson(std::string& result)
 {
     char buf[1024];
-    sprintf(buf, "{ \"result\" : [ "); 
+    sprintf(buf, "{ \"err\" : \"none\", \"result\" : [ "); 
     result = buf;
 
     int o_size = m_pInterpreter->inputs().size();
