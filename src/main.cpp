@@ -2,34 +2,90 @@
 #include <string>
 #include <iostream>
 #include <stdio.h>
+#include "tflite_model.h"
+#include <vector>
+#include <string>
+
+using namespace std;
+
+void show_usage()
+{
+    printf("Usage: tflite_serve --model <model.tflite> [--port <int>]\n");    
+}
 
 int main(int argc, char** argv)
 {
+    string filename;
+    int port = 5555;
 
-//  Prepare our context and socket
+    if(argc == 1)
+    {
+        show_usage();
+        exit(1);
+    }
+
+    for(int i = 0; i < argc; i++)
+    {
+        char* arg = argv[i];
+
+        if (strcmp(arg, "--model") == 0 && i < argc - 1)
+        {
+            filename = argv[i + 1];
+        }
+
+        if (strcmp(arg, "--port") == 0 && i < argc - 1)
+        {
+            port = atoi(argv[i + 1]);
+        }
+
+        if (strcmp(arg, "--help") == 0 || strcmp(arg, "-h") == 0)
+        {
+            show_usage();
+            exit(1);
+        }
+    }
+
+    //Load TFlite model
+    TFLiteModel* pModel = new TFLiteModel();
+
+    if(!pModel->Load(filename.c_str()))
+        exit(1);
+
+    printf("Loaded: %s\n", filename.c_str());
+    pModel->ShowInputs();
+    printf("Wants: %zu bytes\n", pModel->GetInputSize());
+
+
+    //  Prepare our context and socket
     zmq::context_t context (1);
     zmq::socket_t socket (context, ZMQ_REP);
-    socket.bind ("tcp://*:5555");
-    printf("listening for requests on port 5555\n");
+    char connect_str[256];
+    sprintf(connect_str, "tcp://*:%d", port);
+    socket.bind (connect_str);
+    printf("listening for requests on port: %d\n", port);
+
+    char buf[256];
 
     while (true) {
         zmq::message_t request;
 
         //  Wait for next request from client
         socket.recv (&request);
-	char buf[256];
-	strncpy(buf, (const char*)request.data(), request.size());
-	buf[request.size()] = 0;
-        std::cout << "Received: " << buf << std::endl;
 
-        //  Do some 'work'
-	printf("doing work\n");
+        string result;
+        
+        if(pModel->Inference(request.data(), request.size(), result))
+        {
+            pModel->GetResultJson(result);   
+        }
 
         //  Send reply back to client
-        zmq::message_t reply (5);
-        memcpy (reply.data (), "World", 5);
+        zmq::message_t reply (result.size());
+        memcpy (reply.data (), result.c_str(), result.size());
         socket.send (reply);
     }
 
-	return 0;
+
+    return 0;
+
 }
