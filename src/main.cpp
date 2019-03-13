@@ -81,7 +81,7 @@ int main(int argc, char** argv)
         socket.recv (&request);
 
         string result;
-        
+
         if(pModel->Inference(request.data(), request.size(), result))
         {
             pModel->GetResultJson(result);   
@@ -92,6 +92,8 @@ int main(int argc, char** argv)
         memcpy (reply.data (), result.c_str(), result.size());
         socket.send (reply);
     }
+
+    delete pModel;
 
 
     return 0;

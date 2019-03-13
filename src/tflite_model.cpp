@@ -11,6 +11,16 @@ using namespace tflite;
     exit(1);                                                 \
   }
 
+TFLiteModel::TFLiteModel()
+{
+
+}
+  
+TFLiteModel::~TFLiteModel()
+{
+    m_pInterpreter->Close();
+}
+
 bool TFLiteModel::Load(const char* filename)
 {
     m_pModel = FlatBufferModel::BuildFromFile(filename);

@@ -71,7 +71,7 @@ You should see the exeutable tflite_server in the tflite_server/build dir.
 
 ### Test ###
 
-Download a model from https://github.com/tensorflow/models/blob/master/research/slim/nets/mobilenet_v1.md
+Download a model https://www.tensorflow.org/lite/guide/hosted_models
 ```
 cd ~/tflite_server/build
 wget http://download.tensorflow.org/models/mobilenet_v1_2018_08_02/mobilenet_v1_1.0_224_quant.tgz

@@ -6,7 +6,8 @@
 class TFLiteModel
 {
 public:
-
+  TFLiteModel();
+  ~TFLiteModel();
   bool Load(const char* filename);
   void ShowInputs();
   void ShowModel();
