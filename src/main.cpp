@@ -22,7 +22,7 @@ int main(int argc, char** argv)
     if(argc == 1)
     {
         show_usage();
-        exit(1);
+        exit(-1);
     }
 
     for(int i = 0; i < argc; i++)
@@ -70,6 +70,7 @@ int main(int argc, char** argv)
     char connect_str[256];
     sprintf(connect_str, "tcp://*:%d", port);
     socket.bind (connect_str);
+
     printf("listening for requests on port: %d\n", port);
 
     char buf[256];
@@ -95,7 +96,5 @@ int main(int argc, char** argv)
 
     delete pModel;
 
-
     return 0;
-
 }

@@ -10,11 +10,11 @@ from PIL import Image
 import numpy as np
 import zmq
 
+#from https://git.codingcafe.org/Mirrors/tensorflow/tensorflow/blob/a46412b9384b82593f69df04df49bfbe2c7f245c/tensorflow/lite/g3doc/models.md
 model_filename = "mobilenet_v2_1.0_224_quant.tflite"
 model_url = "http://download.tensorflow.org/models/tflite_11_05_08/mobilenet_v2_1.0_224_quant.tgz"
 class_filename = "labels.txt"
 image_filename = "hammerhead.jpg"
-image_url = "http://cdn.shopify.com/s/files/1/2281/5369/products/267929_3_1024x1024.jpg"
 tflite_server_bin = '../build/tflite_serve'
 
 port = 5555
@@ -24,21 +24,9 @@ def download_model_if_needed():
         os.system('wget %s' % model_url)
         os.system('tar xzf %s' % model_filename.replace('.tflite', '.tgz'))
 
-def download_image_if_needed():
-    if not os.path.exists(image_filename):
-        os.system('wget %s' % image_url)
-        os.system('mv 267929_3_1024x1024.jpg %s' % image_filename)
-
 def img_to_binary(img, format='jpeg'):
-    '''
-    accepts: PIL image
-    returns: binary stream (used to save to database)
-    '''
     f = BytesIO()
-    try:
-        img.save(f, format=format)
-    except Exception as e:
-        raise e
+    img.save(f, format=format)
     return f.getvalue()
 
 def load_labels(filename):
@@ -66,7 +54,6 @@ class TFLiteServer():
 
 
 download_model_if_needed()
-download_image_if_needed()
 
 if not os.path.exists(model_filename):
     print(model_filename, " wasn't available.")
@@ -98,4 +85,4 @@ if obj['err'] != "none":
 
 pred_arr = np.array(obj['result'][0])
 class_pred = np.argmax(pred_arr)
-print('prediction:', classes[class_pred], "inference time: %0.2f" % duration)
+print('prediction:', classes[class_pred], "inference time: %0.2f seconds" % duration)

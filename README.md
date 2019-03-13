@@ -69,7 +69,7 @@ make
 ```
 You should see the exeutable tflite_server in the tflite_server/build dir.
 
-### Test ###
+### Speed Test ###
 
 Download a model https://www.tensorflow.org/lite/guide/hosted_models
 ```
@@ -85,10 +85,19 @@ Then in another shell, try the tester.
 ```
 pip3 install zmq
 cd ~/tflight_server/tests
-python3 test.py
+python3 speed_test.py
 ```
 
 Try setting --num_threads 1 and compare. Watch htop to see the processor use. On the Pi3 B, 4 threads were about 250% faster than 1 and pegged all four cores.
+
+### Inference Test ###
+
+```
+cd tflite_serve/tests
+python3 mobilenet_test.py
+```
+
+should output : "prediction: hammerhead, hammerhead shark inference time: 3.51 seconds"
 
 ### Message Protocol ###
 

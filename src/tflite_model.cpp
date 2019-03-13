@@ -8,7 +8,6 @@ using namespace tflite;
 #define TFLITE_MINIMAL_CHECK(x)                              \
   if (!(x)) {                                                \
     fprintf(stderr, "Error at %s:%d\n", __FILE__, __LINE__); \
-    exit(1);                                                 \
   }
 
 TFLiteModel::TFLiteModel()
@@ -18,7 +17,6 @@ TFLiteModel::TFLiteModel()
   
 TFLiteModel::~TFLiteModel()
 {
-    m_pInterpreter->Close();
 }
 
 bool TFLiteModel::Load(const char* filename)
@@ -58,11 +56,18 @@ void TFLiteModel::ShowInputs()
         int iT = m_pInterpreter->inputs()[i];
 
 		if (m_pInterpreter->tensor(iT)->name)
+        {
 			LOG(INFO) << i << ": " << m_pInterpreter->tensor(iT)->name << ", "
-			<< m_pInterpreter->tensor(iT)->bytes << ", "
-			<< m_pInterpreter->tensor(iT)->type << ", "
-			<< m_pInterpreter->tensor(iT)->params.scale << ", "
-			<< m_pInterpreter->tensor(iT)->params.zero_point << "\n";
+			<< m_pInterpreter->tensor(iT)->bytes << " bytes, "
+			<< "type: " << m_pInterpreter->tensor(iT)->type << ", "
+			<< "scale: " << m_pInterpreter->tensor(iT)->params.scale << ", "
+			<< "zero_point: " << m_pInterpreter->tensor(iT)->params.zero_point << "\n";
+
+            TfLiteIntArray* dims = m_pInterpreter->tensor(iT)->dims;
+            char buf[256];
+            sprintf(buf, "(%d, %d, %d)", dims->data[1], dims->data[2], dims->data[3]);
+            LOG(INFO) << " dimensions: " << buf << "\n";
+        }
 	}
 }
 
@@ -128,7 +133,8 @@ bool TFLiteModel::Inference(void* data, size_t len, std::string& result)
             default:
                 LOG(FATAL) << "cannot handle input type "
                             << m_pInterpreter->tensor(iT)->type << " yet";
-                exit(-1);
+                result = "{ \"err\" : \"ERR >> can't handle tensorf input type.\"}";
+                return false;
         }
 
         //advance to next input
