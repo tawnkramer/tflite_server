@@ -89,3 +89,7 @@ python3 test.py
 ```
 
 Try setting --num_threads 1 and compare. Watch htop to see the processor use. On the Pi3 B, it was about 250% faster and pegged all four cores.
+
+#### message protocol ####
+
+This server accepts a ZQM.REQ type connection. It accepts a message and passes entire binary contents to the tflite model inference. The size of the binary payload must exactly match the size specified in the input tensors of the model. The server then sends a JSON reply with the results. If there was a problem, the json err member will contain details.
