@@ -9,7 +9,7 @@ print ("Connecting to server...")
 socket = context.socket(zmq.REQ)
 socket.connect ("tcp://localhost:%d" % port)
 
-size_bytes = 49152
+size_bytes = 150528
 elements = []
 for i in range(size_bytes):
     elements.append(0)

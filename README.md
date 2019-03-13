@@ -12,14 +12,26 @@ Create a small application that is quick to start up, and serves inferences need
 
 from: https://www.tensorflow.org/lite/guide/build_rpi
 ```
+cd ~/
 git clone https://github.com/tensorflow/tensorflow.git --depth=1
 cd tensorflow
 ./tensorflow/lite/tools/make/download_dependencies.sh
+```
+
+*Note: currently there is a bug with the makefile that might be fixed. Check that tensorflow/lite/tools/make/Makefile has BUILD_WITH_NNAPI=false
+
+
+```
 ./tensorflow/lite/tools/make/build_rpi_lib.sh
 sudo cp tensorflow/lite/tools/make/gen/rpi_armv7l/lib/libtensorflow-lite.a /usr/local/lib
 ```
 
-*Note: currently there is a bug with the makefile that might be fixed. Check that tensorflow/lite/tools/make/Makefile has BUILD_WITH_NNAPI=false
+Note* 3/12/2019 The latest tflite code was failing for me. If you have troubles, you can try:
+```
+git pull --depth==100
+git checkout 7273a08672c29739cee9f9aa91fb4d92ec1e2682
+```
+and build again.
 
 #### install dependencies ####
 
@@ -29,7 +41,9 @@ sudo apt-get install build-essential cmake libczmq-dev
 
 #### clone and build tflite_server ####
 
+*Note: this wants to live a dir next to tensorflow
 ```
+cd ~/
 git clone https://github.com/tawnkramer/tflite_server
 mkdir tflite_server/build
 cd tflite_server/build
@@ -45,7 +59,7 @@ Download a model from https://github.com/tensorflow/models/blob/master/research/
 cd tflite_server/build
 wget http://download.tensorflow.org/models/mobilenet_v1_2018_08_02/mobilenet_v1_1.0_224_quant.tgz
 tar xzf mobilenet_v1_1.0_224_quant.tgz
-./tflite_server --model mobilenet_v1_1.0_224_quant.tflite
+./tflite_serve --model mobilenet_v1_1.0_224_quant.tflite
 ```
 
 Then in another shell, try the tester.
