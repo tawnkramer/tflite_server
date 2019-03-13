@@ -10,13 +10,14 @@ using namespace std;
 
 void show_usage()
 {
-    printf("Usage: tflite_serve --model <model.tflite> [--port <int>]\n");    
+    printf("Usage: tflite_serve --model <model.tflite> [--port <int>] [--num_threads <int>]\n");    
 }
 
 int main(int argc, char** argv)
 {
     string filename;
     int port = 5555;
+    int num_threads = 1;
 
     if(argc == 1)
     {
@@ -38,6 +39,11 @@ int main(int argc, char** argv)
             port = atoi(argv[i + 1]);
         }
 
+        if (strcmp(arg, "--num_threads") == 0 && i < argc - 1)
+        {
+            num_threads = atoi(argv[i + 1]);
+        }
+
         if (strcmp(arg, "--help") == 0 || strcmp(arg, "-h") == 0)
         {
             show_usage();
@@ -55,6 +61,8 @@ int main(int argc, char** argv)
     pModel->ShowInputs();
     printf("Wants: %zu bytes\n", pModel->GetInputSize());
 
+    pModel->SetNumThreads(num_threads);
+    printf("Setting num threads: %d\n", num_threads);
 
     //  Prepare our context and socket
     zmq::context_t context (1);

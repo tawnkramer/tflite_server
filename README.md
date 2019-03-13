@@ -18,7 +18,10 @@ cd tensorflow
 ./tensorflow/lite/tools/make/download_dependencies.sh
 ```
 
-*Note: currently there is a bug with the makefile that might be fixed. Check that tensorflow/lite/tools/make/Makefile has BUILD_WITH_NNAPI=false
+*Note: Currently there is a bug with the makefile that might be fixed. Also, enamble openmp for better performance. Check :
+    tensorflow/lite/tools/make/Makefile 
+    * has BUILD_WITH_NNAPI=false
+    * has CXXFLAGS := -O3 -DNDEBUG -fPIC -fopenmp
 
 
 ```
@@ -59,7 +62,8 @@ Download a model from https://github.com/tensorflow/models/blob/master/research/
 cd tflite_server/build
 wget http://download.tensorflow.org/models/mobilenet_v1_2018_08_02/mobilenet_v1_1.0_224_quant.tgz
 tar xzf mobilenet_v1_1.0_224_quant.tgz
-./tflite_serve --model mobilenet_v1_1.0_224_quant.tflite
+export OMP_NUM_THREADS=4
+./tflite_serve --model mobilenet_v1_1.0_224_quant.tflite --num_threads 4
 ```
 
 Then in another shell, try the tester.
@@ -68,3 +72,5 @@ Then in another shell, try the tester.
 cd tflight_server/tests
 python test.py
 ```
+
+Try setting --num_threads 1 and compare. Watch htop to see the processor use. On the Pi3 B, it was about 250% faster and pegged all four cores.

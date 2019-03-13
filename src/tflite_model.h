@@ -10,6 +10,7 @@ public:
   bool Load(const char* filename);
   void ShowInputs();
   void ShowModel();
+  void SetNumThreads(int numthreads);
   size_t GetInputSize();
   bool Inference(void* data, size_t len, std::string& result);
   void GetResultJson(std::string& result);

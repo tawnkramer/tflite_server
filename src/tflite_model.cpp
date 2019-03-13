@@ -33,6 +33,11 @@ bool TFLiteModel::Load(const char* filename)
     return true;
 }
 
+void TFLiteModel::SetNumThreads(int numthreads)
+{
+    m_pInterpreter->SetNumThreads(numthreads);
+}
+
 void TFLiteModel::ShowInputs()
 {
 	LOG(INFO) << "inputs: " << m_pInterpreter->inputs().size() << "\n";
@@ -87,7 +92,7 @@ bool TFLiteModel::Inference(void* data, size_t len, std::string& result)
     if(len != GetInputSize())
     {
         char buf[1024];
-        sprintf(buf, "{ \"err\" : \"ERR >> expected %d bytes, got %d\"}", GetInputSize(), len); 
+        sprintf(buf, "{ \"err\" : \"ERR >> expected %zu bytes, got %zu\"}", GetInputSize(), len); 
         result = buf;
         return false;
     }
