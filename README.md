@@ -8,37 +8,11 @@ Create a small application that is quick to start up, and serves inferences need
 
 ZMQ is easy to use in a variety of languages, esp python, and makes for easy integration. No need to install tensorflow on the destination machine. This is designed primarily for RaspberryPi B/B+/A+/Zero.
 
-With python, you can launch this executable as a subprocess and open a socket to use it. Even serve a model from one machine to another with sockets. fits many use cases. 
+With python you can launch this executable as a subprocess and open a socket to use it. Even serve a model from one machine to another.
+
+*This is NOT intended as a production server.* 
 
 ### Setup ###
-
-#### clone and build tensorflow tflite library ####
-
-from: https://www.tensorflow.org/lite/guide/build_rpi
-```
-cd ~/
-git clone https://github.com/tensorflow/tensorflow.git --depth=1
-cd tensorflow
-./tensorflow/lite/tools/make/download_dependencies.sh
-```
-
-*Note: Currently there is a bug with the makefile that might be fixed. Also, enamble openmp for better performance. Check :
-    tensorflow/lite/tools/make/Makefile 
-    * has BUILD_WITH_NNAPI=false
-    * has CXXFLAGS := -O3 -DNDEBUG -fPIC -fopenmp
-
-
-```
-./tensorflow/lite/tools/make/build_rpi_lib.sh
-sudo cp tensorflow/lite/tools/make/gen/rpi_armv7l/lib/libtensorflow-lite.a /usr/local/lib
-```
-
-Note* 3/12/2019 The latest tflite code was failing for me. If you have troubles, you can try:
-```
-git pull --depth==100
-git checkout 7273a08672c29739cee9f9aa91fb4d92ec1e2682
-```
-and build again.
 
 #### install dependencies ####
 
@@ -46,9 +20,45 @@ and build again.
 sudo apt-get install build-essential cmake libczmq-dev
 ```
 
+#### clone and build tensorflow tflite library ####
+
+These are the steps to build on the PI3 B.
+
+from: https://www.tensorflow.org/lite/guide/build_rpi
+```
+cd ~/
+git clone https://github.com/tensorflow/tensorflow.git --depth=1
+```
+
+Note* 3/12/2019 The latest tflite code was failing for me. If you have troubles, you can try:
+```
+cd ~/tensorflow
+git pull --depth==100
+git checkout 7273a08672c29739cee9f9aa91fb4d92ec1e2682
+```
+
+continue build ...
+```
+cd ~/tensorflow
+./tensorflow/lite/tools/make/download_dependencies.sh
+```
+
+*Note: Currently there is a bug with the makefile that might be fixed. Also, enable openmp for better performance. Check :
+    tensorflow/lite/tools/make/Makefile 
+    * has BUILD_WITH_NNAPI=false
+    * has CXXFLAGS := -O3 -DNDEBUG -fPIC -fopenmp
+
+
+```
+cd ~/tensorflow
+./tensorflow/lite/tools/make/build_rpi_lib.sh
+sudo cp tensorflow/lite/tools/make/gen/rpi_armv7l/lib/libtensorflow-lite.a /usr/local/lib
+```
+
+
 #### clone and build tflite_server ####
 
-*Note: this wants to live a dir next to tensorflow
+*Note: this wants to live a dir next to tensorflow. Or modify CMakeLists.txt for your Tensorflow location.
 ```
 cd ~/
 git clone https://github.com/tawnkramer/tflite_server
@@ -63,7 +73,7 @@ You should see the exeutable tflite_server in the tflite_server/build dir.
 
 Download a model from https://github.com/tensorflow/models/blob/master/research/slim/nets/mobilenet_v1.md
 ```
-cd tflite_server/build
+cd ~/tflite_server/build
 wget http://download.tensorflow.org/models/mobilenet_v1_2018_08_02/mobilenet_v1_1.0_224_quant.tgz
 tar xzf mobilenet_v1_1.0_224_quant.tgz
 export OMP_NUM_THREADS=4
@@ -74,7 +84,7 @@ Then in another shell, try the tester.
 
 ```
 pip3 install zmq
-cd tflight_server/tests
+cd ~/tflight_server/tests
 python3 test.py
 ```
 
