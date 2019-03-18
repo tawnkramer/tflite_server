@@ -2,7 +2,7 @@
 
 A lightweight executable that will serve TFlite model inferencing over zmq socket. 
 
-### Goals ###
+## Goals ##
 
 Create a small application that is quick to start up, and serves inferences needs of other processes that need low latency response. This starts up much faster than an equivalent python code and can be built easier on low cpu devices like the raspberry pi zero.
 
@@ -12,7 +12,29 @@ With python you can launch this executable as a subprocess and open a socket to 
 
 *This is NOT intended as a production server.* 
 
-### Setup ###
+## Setup ##
+
+Either install pre-built binaries or build from source
+
+### Pre-Built Binaries ###
+
+Go to https://github.com/tawnkramer/tflite_server/releases and get the latest. Download to your machine:
+```
+wget https://github.com/tawnkramer/tflite_server/releases/download/v0.1/tflite_serve.tar.gz
+tar xzf tflite_serve.tar.gz
+```
+Select the executable for your platform instruction set. 
+* tflite_serve_arm6 : PiZero/PiZeroW
+* tflite_serve_arm7 : Pi3 B/B+/A+
+* tflite_serve_x64 : Ubuntu 18.04 x64
+
+copy it wherever you like to run from. ex:
+```
+mkdir ~/bin
+cp tflite_serve_arm6 ~/bin/tflite_serve
+```
+
+### Build from source ###
 
 #### install dependencies ####
 
@@ -69,7 +91,7 @@ make
 ```
 You should see the exeutable tflite_server in the tflite_server/build dir.
 
-### Speed Test ###
+## Speed Test ##
 
 Download a model https://www.tensorflow.org/lite/guide/hosted_models
 ```
@@ -90,7 +112,7 @@ python3 speed_test.py
 
 Try setting --num_threads 1 and compare. Watch htop to see the processor use. On the Pi3 B, 4 threads were about 250% faster than 1 and pegged all four cores.
 
-### Inference Test ###
+## Inference Test ##
 
 ```
 cd tflite_serve/tests
@@ -99,6 +121,6 @@ python3 mobilenet_test.py
 
 should output : "prediction: hammerhead, hammerhead shark inference time: 3.51 seconds"
 
-### Message Protocol ###
+## Message Protocol ##
 
 This server accepts a ZQM.REQ type connection. It accepts a message and passes entire binary contents to the tflite model inference. The size of the binary payload must exactly match the size specified in the input tensors of the model. The server then sends a JSON reply with the results. If there was a problem, the json err member will contain details.
