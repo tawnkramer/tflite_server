@@ -89,17 +89,20 @@ cd tflite_server/build
 cmake ..
 make
 ```
-You should see the exeutable tflite_server in the tflite_server/build dir.
+You should see the exeutable tflite_server in the tflite_server/build dir. Copy this to whatever location works for you. Here ~/bin
+```
+mkdir ~/bin
+cp ~/tflite_server/build/tflite_server ~/bin/
+```
 
 ## Speed Test ##
 
 Download a model https://www.tensorflow.org/lite/guide/hosted_models
 ```
-cd ~/tflite_server/build
 wget http://download.tensorflow.org/models/mobilenet_v1_2018_08_02/mobilenet_v1_1.0_224_quant.tgz
 tar xzf mobilenet_v1_1.0_224_quant.tgz
 export OMP_NUM_THREADS=4
-./tflite_serve --model mobilenet_v1_1.0_224_quant.tflite --num_threads 4
+~/bin/tflite_serve --model mobilenet_v1_1.0_224_quant.tflite --num_threads 4
 ```
 
 Then in another shell, try the tester.
