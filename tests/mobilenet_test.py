@@ -15,7 +15,7 @@ model_filename = "mobilenet_v2_1.0_224_quant.tflite"
 model_url = "http://download.tensorflow.org/models/tflite_11_05_08/mobilenet_v2_1.0_224_quant.tgz"
 class_filename = "labels.txt"
 image_filename = "hammerhead.jpg"
-tflite_server_bin = '../build/tflite_serve'
+tflite_server_bin = '~/bin/tflite_serve'
 
 port = 5555
 
@@ -67,6 +67,10 @@ img = img.resize(dest_size)
 arr = np.array(img)
 img_bytes = arr.tobytes()
 
+if not os.path.exists(tflite_server_bin):
+    print('tflite server not found at', tflite_server_bin)
+    exit(-1)
+    
 server = TFLiteServer(tflite_server_bin, model_filename, port)
 
 context = zmq.Context()
