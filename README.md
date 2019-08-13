@@ -32,6 +32,7 @@ copy it wherever you like to run from. ex:
 ```
 mkdir ~/bin
 cp tflite_serve_arm6 ~/bin/tflite_serve
+sudo apt-get install libczmq-dev
 ```
 
 ### Build from source ###
